@@ -1,0 +1,7 @@
+dotenv
+langchain
+langchain-community
+langchain-openai
+langchain-ollama
+pymongo
+pyyaml

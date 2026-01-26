@@ -1,7 +1,7 @@
 # Endpoint: /process (nhận userMessage, call service)
 from fastapi import APIRouter, Depends
-from app.schemas.ai_schema import UserMessage, AIResponse
-from app.services.ai_service import AIService
+from ai_engine.schemas.ai_schema import UserMessage, AIResponse
+from ai_engine.services.ai_service import AIService
 
 router = APIRouter()
 

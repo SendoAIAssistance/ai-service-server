@@ -1,5 +1,5 @@
 # Balancer: Phân tích yêu cầu, điều phối agents/tools
-from app.schemas.ai_schema import AIResponse
+from ai_engine.schemas.ai_schema import AIResponse
 
 class Orchestra:
     async def dispatch(self, message: str) -> AIResponse:

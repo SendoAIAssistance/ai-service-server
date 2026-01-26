@@ -1,5 +1,7 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.operations import SearchIndexModel
 import time
-import app.config as config
-uri =
+from app.config import settings
+
+uri = settings.MONGODB_ATLAS_URI
+client = MongoClient(uri)

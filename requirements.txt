@@ -1,16 +1,17 @@
-fastapi
-uvicorn
-pydantic
 langchain
 python-dotenv
 pyyaml
 requests
+dotenv
+pymongo
+pydantic-settings
 
 fastapi==0.104.1
 uvicorn==0.24.0
 pydantic==2.5.2
 langchain==0.1.0  # Phiên bản mới hỗ trợ tốt agents
 langchain-community==0.0.20  # Cho Ollama/HuggingFace
+langchain-ollama
 langchain-openapi==0.0.1  # Để load tools từ OpenAPI YAML (nếu cần, hoặc custom)
 pyyaml==6.0.1
 requests==2.31.0
@@ -18,3 +19,4 @@ requests==2.31.0
 # Nếu HuggingFace local: 
 transformers==4.36.2
 torch
+

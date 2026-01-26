@@ -1,6 +1,6 @@
 # Core AI logic: Process message -> Call Orchestra
-from app.schemas.ai_schema import UserMessage, AIResponse
-from app.agents.orchestra import Orchestra
+from ai_engine.schemas.ai_schema import UserMessage, AIResponse
+from ai_engine.agents.orchestra import Orchestra
 
 class AIService:
     def __init__(self):
