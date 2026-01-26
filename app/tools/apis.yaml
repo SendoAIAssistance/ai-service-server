@@ -1,0 +1,8 @@
+# OpenAPI YAML: Endpoints, params, descriptions
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /check-status:
+    get:
+      summary: Check system status
+      description: Returns the current health of the user services
