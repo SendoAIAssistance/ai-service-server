@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: ai_engine
+Version: 0.1.0
+Summary: Sendo Tech Support AI Agent Engine
+Author-email: Khoi Le <khoile5464205@gmail.com>
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: dotenv
+Requires-Dist: langchain
+Requires-Dist: langchain-community
+Requires-Dist: langchain-openai
+Requires-Dist: langchain-ollama
+Requires-Dist: pymongo
+Requires-Dist: pyyaml
+Provides-Extra: test
+Requires-Dist: pytest; extra == "test"
+Requires-Dist: pytest-asyncio; extra == "test"
+
+# ai-service-server
+The central AI processing unit for the organization. Handles intelligent agent workflows, LLM orchestration, and exposes neural capabilities via RESTful APIs.

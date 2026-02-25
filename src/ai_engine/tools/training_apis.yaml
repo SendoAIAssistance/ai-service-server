@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info:
+  title: OpenWeatherMap API
+  version: 1.0.0
+  description: Real-time weather forecasting and geocoding services using OpenWeatherMap.
+
+servers:
+  - url: http://api.openweathermap.org/
+    description: Production Server
+
+paths:
+  /geo/1.0/direct:
+    get:
+      summary: Get geographical coordinates by location name
+      description: Returns the latitude and longitude of a specific location (city name or area) to be used in weather queries.
+      operationId: getLatLon
+      parameters:
+        - name: appid
+          in: query
+          description: Your unique API key.
+          required: true
+          schema:
+            type: string
+        - name: q
+          in: query
+          description: City name, state code (US only), and country code divided by comma. Use ISO 3166 country codes.
+          required: true
+          schema:
+            type: string
+            example: "Ho Chi Minh"
+      responses:
+        '200':
+          description: Success - Returns a list of matching locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: Name of the found location.
+                    local_names:
+                      type: object
+                      additionalProperties:
+                        type: string
+                      example:
+                        en: "London"
+                        vi: "Luân Đôn"
+                    lat:
+                      type: number
+                      description: Northern/Southern geographical coordinate (latitude).
+                    lon:
+                      type: number
+                      description: Eastern/Western geographical coordinate (longitude).
+                    country:
+                      type: string
+                      description: Country code of the found location.
+                    state:
+                      type: string
+                      description: State or province of the found location (where available).
+
+  /data/3.0/onecall:
+    get:
+      summary: Get full weather forecast data
+      description: Provides access to current weather, minute-by-minute precipitation, hourly forecasts for 48 hours, daily forecasts for 8 days, and national weather alerts.
+      operationId: getForecast
+      parameters:
+        - name: appid
+          in: query
+          description: Your unique API key.
+          required: true
+          schema:
+            type: string
+        - name: lat
+          in: query
+          description: Latitude coordinate of the location.
+          required: true
+          schema:
+            type: number
+        - name: lon
+          in: query
+          description: Longitude coordinate of the location.
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Success - Returns detailed weather data for the specified coordinates.

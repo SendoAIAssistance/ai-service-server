@@ -1,22 +1,26 @@
-langchain
-python-dotenv
-pyyaml
-requests
-dotenv
-pymongo
-pydantic-settings
+# --- Core Frameworks (Nới lỏng để tránh xung đột Pydantic) ---
+fastapi>=0.104.1
+uvicorn>=0.24.0
+pydantic>=2.7.4
+pydantic-settings>=2.2.0
 
-fastapi==0.104.1
-uvicorn==0.24.0
-pydantic==2.5.2
-langchain==0.1.0  # Phiên bản mới hỗ trợ tốt agents
-langchain-community==0.0.20  # Cho Ollama/HuggingFace
-langchain-ollama
-langchain-openapi==0.0.1  # Để load tools từ OpenAPI YAML (nếu cần, hoặc custom)
-pyyaml==6.0.1
-requests==2.31.0
-# Nếu dùng Ollama: langchain-community có sẵn
-# Nếu HuggingFace local: 
-transformers==4.36.2
-torch
+# --- LangChain Ecosystem (Tương thích Pydantic 2.7+) ---
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-core>=0.3.0
+langchain-ollama>=0.2.0
+langchain-openai>=0.2.0
 
+# --- Database & Utilities ---
+pymongo>=4.6.0
+python-dotenv>=1.0.0
+pyyaml>=6.0.1
+requests>=2.31.0
+rich>=13.7.0
+
+# --- GPU & AI (Dành cho RTX 3070 và CUDA 13) ---
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch>=2.2.0
+torchvision
+torchaudio
+transformers>=4.38.0

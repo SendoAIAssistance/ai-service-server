@@ -1,0 +1,2 @@
+[console_scripts]
+sendo-server = app.main:start
