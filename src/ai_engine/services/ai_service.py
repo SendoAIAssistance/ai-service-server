@@ -22,10 +22,18 @@ class AIService:
         # TODO: Tiền xử lý file tại đây
         file_data = None
 
-        if isinstance(file, UploadFile) and file.filename:
-            file_data = await file.read()
-            logger_service.info(f"Đã nạp file: {file.filename}")
+        if file and hasattr(file, "filename") and file.filename:
+            try:
+                # Đảm bảo con trỏ file ở vị trí đầu tiên
+                await file.seek(0)
+                file_data = await file.read()
+                logger_service.info(f"✅ Đã nạp file thành công: {file.filename} ({len(file_data)} bytes)")
+            except Exception as e:
+                logger_service.error(f"❌ Lỗi khi đọc file: {str(e)}")
+        else:
+            logger_service.info("ℹ️ Request không kèm file hoặc file rỗng.")
 
-        # Logic gọi Agent Orchestra tại đây
+        # TRUYỀN VÀO ORCHESTRA
+        # Nhớ check xem bên Orchestra hàm dispatch có nhận tham số file_data chưa nhé
         result = await self.orchestra.dispatch(message=message, file_data=file_data)
         return result

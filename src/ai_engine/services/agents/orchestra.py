@@ -6,25 +6,37 @@ from langgraph.graph import StateGraph, END
 
 from ai_engine.services.agents.state import AgentState
 from ai_engine.schemas.ai_schema import AIResponse
+from ai_engine.services.agents.experts.table_expert import TableExpert
+from ai_engine.services.agents.experts.dynamic_router.dr_floor_1 import Floor1Router
 
 orchestra_logger = logging.getLogger("ai_engine.orchestra")
 
 class Orchestra:
     def __init__(self):
+        self.table_expert = TableExpert()
+
+        self.dr_floor_1_router = Floor1Router()
         workflow = StateGraph(AgentState)
 
         # Định nghĩa các Node
-        workflow.add_node("router", self.route_input)
+        workflow.add_node("dr_floor_1", self.dr_floor_1)
         workflow.add_node("text_expert", self.process_text)
         workflow.add_node("table_expert", self.process_table)
         workflow.add_node("aggregator", self.aggregator_and_respond)
 
         # Chạy song song text và image cùng lúc!
-        workflow.set_entry_point("router")
+        workflow.set_entry_point("dr_floor_1")
 
-        # Router quyết định có chạy song song hay không
-        workflow.add_edge("router", "text_expert")
-        workflow.add_edge("router", "table_expert")
+        # Setup Dynamic Router Floor 1
+        workflow.add_conditional_edges(
+            "dr_floor_1",
+            self.balancer_decision,
+            {
+                "table_expert": "table_expert",
+                "text_expert": "text_expert",
+                "aggregator": "aggregator",
+            }
+        )
 
         # Đổ context về Aggregator
         workflow.add_edge("text_expert", "aggregator")
@@ -33,33 +45,6 @@ class Orchestra:
         workflow.add_edge("aggregator", END)
         self.app = workflow.compile()
         orchestra_logger.info("🎻 Orchestra initialized!")
-
-    async def route_input(self, state: AgentState):
-        orchestra_logger.info("🛠 Router: Phân loại dữ liệu...")
-        # TODO: Logic lọc loại file cơ bản
-        return {"file_type": "table" if state.get("file_data") else "None"}
-
-    async def process_text(self, state: AgentState):
-        orchestra_logger.info("📝 Text Expert: Đang phân tích yêu cầu...")
-        # TODO: PHân tích "Địt mẹ lỗi rồi"
-        return {"text_context": "Người dùng báo lỗi đồng bộ dữ liệu."}
-
-    async def process_table(self, state: AgentState):
-        if not state.get("file_data"):
-            return {"file_context": "Không có file bảng."}
-        orchestra_logger.info("📊 Table Expert: Đang đọc dữ liệu bảng...")
-        # TODO: dùng Pandas hoặc Polars để xử lý file_data ở đây
-        return {"file_content": "Phát hiện dòng log ID #123 có status 500."}
-
-    async def aggregator_and_respond(self, state: AgentState):
-        orchestra_logger.info("🤖 Aggregator: Đang tổng hợp Context...")
-        # Lấy text_context + file_context để ra chẩn đoán cuối
-        return {
-            "diagnosis": f"Lỗi ID #123 dựa trên: {state['text_context']}",
-            "case_type": "Transaction Error",
-            "solution": "Kiểm tra lại gateway Senpay",
-            "final_answer": "Case này do ID #123 bị treo, để mình báo team dev fix."
-        }
 
     async def dispatch(self, message: str, file_data: Optional[bytes] = None) -> AIResponse:
         """
@@ -70,7 +55,6 @@ class Orchestra:
         """
         try:
             orchestra_logger.info("--- Orchestra Starting ---")
-
             # 1. Khởi tạo State
             inputs = {
                 "message": [message],
@@ -96,3 +80,58 @@ class Orchestra:
                 solution="Restart Service",
                 response=str(e)
             )
+
+    async def dr_floor_1(self, state: AgentState):
+        """
+        Gọi AI LOCAL để quyết định luồng chạy
+        """
+        orchestra_logger.info("🛠 Router: Phân loại dữ liệu...")
+        # TODO: Logic lọc loại file cơ bản
+        result = await self.dr_floor_1_router.categorize(state)
+
+        decision = result.get("decision", ["text_expert"])
+        reasoning = result.get("reasoning", "No reasoning provided")
+
+        orchestra_logger.info(f"🎯 AI Decision: {decision} | Lý do: {reasoning}")
+
+
+        return {
+            "router_decision": decision,
+            "thinking_log": [f"Router: Kích hoạt {decision} vì {reasoning}"]
+        }
+
+    async def balancer_decision(self, state: AgentState):
+        """
+        LangGraph cho phép trả về một list các node để chạy song song.
+        Nếu list rỗng, mình bắt nó nhảy tới aggregator luôn.
+        """
+        decision = state.get("router_decision", [])
+        if not decision:
+            return "aggregator"
+
+        valid_nodes = ["table_expert", "text_expert", "aggregator"]
+        final_path = [d for d in decision if d in valid_nodes]
+
+        return final_path if final_path else "aggregator"
+
+    async def process_text(self, state: AgentState):
+        orchestra_logger.info("📝 Calling Text Expert: Đang phân tích yêu cầu...")
+        # TODO: PHân tích "Địt mẹ lỗi rồi"
+        return {"text_context": "Người dùng báo lỗi đồng bộ dữ liệu."}
+
+    async def process_table(self, state: AgentState):
+        if not state.get("file_data"):
+            return {"thinking_logs": ["Expert Table: Không có file, bỏ qua bước này."]}
+        orchestra_logger.info("📊 Calling Table Expert: Đang đọc dữ liệu bảng...")
+        result = await self.table_expert.analyze(state["file_data"])
+        return result
+
+    async def aggregator_and_respond(self, state: AgentState):
+        orchestra_logger.info("🤖 Aggregator: Đang tổng hợp Context...")
+        # Lấy text_context + file_context để ra chẩn đoán cuối
+        return {
+            "diagnosis": f"Lỗi ID #123 dựa trên: {state['text_context']}",
+            "case_type": "Transaction Error",
+            "solution": "Kiểm tra lại gateway Senpay",
+            "final_answer": "Case này do ID #123 bị treo, để mình báo team dev fix."
+        }

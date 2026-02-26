@@ -6,6 +6,9 @@ class AgentState(TypedDict):
     file_data: Optional[bytes]
     file_type: Optional[str] # "table", "image", "text", "None"
 
+    router_decision: List[str]
+    thinking_logs: Annotated[List[str], operator.add]
+
     # Context trung gian (nơi các Expert đổ dữ liệu về)
     text_context: str
     file_context: str
