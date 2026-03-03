@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from ai_engine.core.config import settings
-from ai_engine.core.logging import setup_logging, request_id_var
+from ai_engine.core.server_logging import setup_logging, request_id_var
 from ai_engine.api.routes.chat_routes import router as chat_router
 
 # 0) Logging
