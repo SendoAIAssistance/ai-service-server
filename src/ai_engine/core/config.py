@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api/v1"
     OLLAMA_HOST: str | None = None
     PROJECT_ROOT: Path = PROJECT_ROOT
+    DATA_ROOT: Path = PROJECT_ROOT / "src" / "storage" / "vector_db" / "sendo_dictionary"
     MONGODB_ATLAS_URI: str | None = None
     WEATHER_API_API_KEY : str | None = None
 
