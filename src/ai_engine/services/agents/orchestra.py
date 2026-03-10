@@ -10,7 +10,6 @@ from langchain_ollama import ChatOllama
 from langgraph.checkpoint.memory import InMemorySaver
 
 from ai_engine.schemas.chat_schema import StreamEvent, MessageStatus
-from ai_engine.services.agents.tools import Tools
 from ai_engine.services.database.mongo_manager import MongoDBVectorManager  # ← Import class bạn đã có
 
 orchestra_logger = logging.getLogger("ai_engine.orchestra")
@@ -107,7 +106,6 @@ Query:
 class Orchestra:
     def __init__(self):
         self.memory = InMemorySaver()
-        tools = Tools()
 
         # Khởi tạo Vector DB Manager (chỉ load 1 lần khi init)
         self.vector_manager = MongoDBVectorManager(
