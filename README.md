@@ -813,7 +813,7 @@ flowchart TB
   LB[Load Balancer / API Gateway]
   API1[FastAPI Instance 1]
   API2[FastAPI Instance 2]
-  INF[Model Inference Layer\n(Ollama / vLLM / Triton)]
+  INF[Model Inference Layer<br>(Ollama / vLLM / Triton)]
   DB[(MongoDB Atlas)]
   PROM[Prometheus / Grafana]
 
@@ -840,7 +840,7 @@ flowchart TB
 
 ```mermaid
 flowchart TD
-  Q[User question] --> R[Retrieve context\n(vector DB / docs)]
+  Q[User question] --> R[Retrieve context<br>(vector DB / docs)]
   Q --> C[classifier_model]
   C -->|simple| B[basic_model]
   C -->|complex| E[expert_model]
