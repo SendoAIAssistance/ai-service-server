@@ -10,6 +10,7 @@ from langchain_mongodb import MongoDBAtlasVectorSearch
 from langchain_ollama import OllamaEmbeddings
 
 from ai_engine.core.config import settings
+import uuid
 
 logger = logging.getLogger("ai_service.database.mongo_manager")
 
@@ -93,7 +94,7 @@ class MongoDBVectorManager:
                 break
             time.sleep(5)
 
-    def load_cases_from_yaml(self, yaml_filename: str = "cases.yaml", reset_first: bool = False):
+    def load_from_yaml(self, yaml_filename: str = "cases.yaml", reset_first: bool = False):
         yaml_path = Path(settings.DATA_ROOT) / yaml_filename
         if not yaml_path.exists(): raise FileNotFoundError(f"❌ Không thấy file: {yaml_path}")
 
@@ -110,10 +111,17 @@ class MongoDBVectorManager:
         ids = []
 
         for case in cases:
-            content = f"Problem: {case.get('clarified_problem')}\nSolution: {case.get('solution')}"
+            content = (
+                f"Problem: {case.get('problem')}"
+                f"\nClarified Problem: {case.get('clarified_problem')}"
+                f"\nSolution: {case.get('solution')}"
+                f"\nCause: {case.get('root_cause')}"
+            )
             documents.append(content)
-            metadatas.append({"case_id": case.get("case_id"), "full_case": case})
-            ids.append(str(case.get("case_id")))
+            unique_id = str(uuid.uuid4())
+            metadatas.append(case)
+            ids.append(unique_id)
+
 
         if documents:
             self.vector_store.add_texts(texts=documents, metadatas=metadatas, ids=ids)
@@ -138,18 +146,19 @@ class MongoDBVectorManager:
             return []
 
 
-# if __name__ == "__main__":
-#     manager = MongoDBVectorManager()
-#
-#     # BƯỚC QUAN TRỌNG: Gọi hàm tạo index bằng code
-#     manager.setup_vector_index()
-#
-#     # Nạp data
-#     manager.load_cases_from_yaml(reset_first=True)
-#
-#     # Test search
-#     test_query = "Giao dịch ảnh hưởng đến stock mã HNI007230700"
-#     results = manager.similarity_search(query=test_query)
-#
-#     for res in results:
-#         print(f"[{res['score']:.4f}] ID: {res['metadata']['case_id']}")
+if __name__ == "__main__":
+    manager = MongoDBVectorManager()
+
+    # BƯỚC QUAN TRỌNG: Gọi hàm tạo index bằng code
+    # manager.setup_vector_index()
+
+    # Nạp data
+    manager.load_from_yaml(yaml_filename="cases.yaml", reset_first=True)
+    manager.load_from_yaml(yaml_filename="sos_base_knowledge.yaml", reset_first=False)
+
+    # Test search
+    test_query = "Khách hàng thanh toán bằng phương thức gì?"
+    results = manager.similarity_search(query=test_query)
+
+    for res in results:
+        print(f"[{res['score']:.4f}] ID: {res['metadata']['case_id']}")

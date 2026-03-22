@@ -31,7 +31,7 @@ class AIService:
         """Hàm stream thay vì return 1 lần"""
         async for event in self.orchestra.stream_dispatch(
                 conversationId=conversation_id,
-                message=message,
+                usr_message=message,
                 file_data=await self._read_file(file) if file else None
         ):
             yield f"data: {event.model_dump_json()}\n\n"

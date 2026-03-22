@@ -4,9 +4,8 @@ import sys
 
 # ================== CẤU HÌNH ==================
 URL = "http://127.0.0.1:8000/api/v1/chat"
-CONVERSATION_ID = "toibingu"
-MESSAGE = """Check mã hàng thấy up giá khuyến mãi rồi, nhưng hiện tại po không ăn theo bảng giá km. Giờ phải kiểm tra như thế nào?
-"""
+CONVERSATION_ID = "test_1"
+MESSAGE = "hi"
 # =============================================
 
 if __name__ == "__main__":
@@ -27,7 +26,7 @@ if __name__ == "__main__":
                 timeout=50
         ) as r:
             r.raise_for_status()
-
+            print("\n")
             for line in r.iter_lines():
                 if not line:
                     continue
