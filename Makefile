@@ -4,9 +4,15 @@ export $(shell sed 's/=.*//' .env)
 
 .PHONY: serve tunnel dev install
 
+PORT=8000
+
 # 1. Khởi động server Uvicorn
 serve:
-	uvicorn src.main:app --port 8000 --reload
+	uvicorn src.main:app --port $(PORT) --reload
+
+stop:
+	@echo "Checking for processes on port $(PORT)..."
+	@fuser -k $(PORT)/tcp || echo "Port $(PORT) is already free."
 
 # 2. Khởi động Ngrok (tunnel)
 # Lưu ý: Port phải khớp với port của Uvicorn
@@ -22,3 +28,6 @@ dev:
 install:
 	pip install -r requirements.txt
 	@echo "Đừng quên chạy 'ngrok config add-authtoken <your-token>' nếu là máy mới nhé!"
+
+activate:
+	source ./.venv/Scripts/activate

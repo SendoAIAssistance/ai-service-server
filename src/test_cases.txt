@@ -1,0 +1,5 @@
+"Tôi là nhân sự mới ở miền Bắc, tôi đã có email công ty nhưng không vào được hệ thống SOS để xem tồn kho ở kho Nguyễn Khê, hệ thống cứ báo lỗi."
+"Tôi muốn bật bán một mã quà tặng mới nhập từ NCC. Tôi đã có SKU mua (Sourcing) rồi, bây giờ làm sao để khách thấy trên app với giá 0đ?"
+Tại sao mã sản phẩm HNI007230700 trong kho còn hàng ở vị trí Norack mà trên App khách hàng lại báo hết hàng?
+"Khách hàng của Sendo thanh toán đơn hàng qua các phương thức chính nào?"
+"FGold là cái gì?"
